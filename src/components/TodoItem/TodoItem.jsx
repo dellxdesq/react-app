@@ -1,7 +1,8 @@
 import React from 'react';
 import styled, { css } from "styled-components"
 import {TodoItemContainer} from './TodoItemContainer'
-import {TodoItemCheckbox} from './TodoItemCheckbox';
+import {TodoItemCheckbox} from './TodoItemCheckbox'
+import {useDeleteTodoItem} from 'C:/Users/Dell/Desktop/weblab2/react-app/src/data/hooks/useData.js'
 
 const checkedCss = css`
   color: #B5B5BA;
@@ -26,14 +27,24 @@ const Delete = styled.span`
   cursor: pointer;
 `;
 
-export const TodoItem = ({title, checked}) => {
+// на иконку удаление повесить обработчик, который будет вызывать confirm 
+// если confirm = true - вызываем удаление по айдишнику
+export const TodoItem = ({ id, title, checked }) => {
+  const { mutate: deleteTodoItem } = useDeleteTodoItem();
+  const handleDelete = () => {
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm('Вы уверены, что хотите удалить эту задачу?')) {
+      deleteTodoItem(id);
+    }
+  };
+
   return (
     <TodoItemContainer>
       <TodoItemCheckbox checked={checked} />
       <Title checked={checked}>
         {title}
       </Title>
-      <Delete />
+      <Delete onClick={handleDelete} />
     </TodoItemContainer>
-  )
-}
+  );
+};
