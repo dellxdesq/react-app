@@ -33,14 +33,27 @@ export const LocalStorage = {
     });
   },
 
-  
-    //Получить массив элементов
-    //сделать фильтр по элементам через функцию filter у массива. Оставить только нужные элементы
-    //Сохранить отфильтрованный список в LS
     deleteTodoItemFromLocalStorage: (todoItemId) => {
       return new Promise((resolve, reject) => {
         LocalStorage.getTodoItemsFromLocalStorage().then((todoItems) => {       
           const updatedTodoItems = todoItems.filter(item => item.id !== todoItemId);        
+          localStorage.setItem(TODO_ITEMS_LOCAL_STORAGE_KEY, JSON.stringify(updatedTodoItems));
+          resolve();
+        }).catch((error) => {
+          reject(error);
+        });
+      });
+    },
+
+    toggleTodoItemInLocalStorage: (todoItemId) => {
+      return new Promise((resolve, reject) => {
+        LocalStorage.getTodoItemsFromLocalStorage().then((todoItems) => {
+          const updatedTodoItems = todoItems.map((item) => {
+            if (item.id === todoItemId) {
+              return { ...item, isDone: !item.isDone };
+            }
+            return item;
+          });
           localStorage.setItem(TODO_ITEMS_LOCAL_STORAGE_KEY, JSON.stringify(updatedTodoItems));
           resolve();
         }).catch((error) => {

@@ -19,9 +19,9 @@ export const TodoItems = () => {
   }
 
 
-  const filteredBySearchItems = todoItems.filter((todoItem) => {
-    return true;
-  })
+  const filteredBySearchItems = todoItems.filter((todoItem) =>
+    todoItem.title.toLowerCase().includes(searchValue.toLowerCase())
+  );
 
 
   const todoItemsElements = filteredBySearchItems.map((item) => {
@@ -30,14 +30,14 @@ export const TodoItems = () => {
         key={item.id} 
         id={item.id} 
         title={item.title} 
-        checked={item.isDone} 
+        isDone={item.isDone} 
       />
     );
   });
 
   return (
     <TodoItemsContainer>
-      <SearchInput value={searchValue} />
+      <SearchInput value={searchValue} setValue={setSearchValue} />
       {todoItemsElements}
       <NewTodoItem />
     </TodoItemsContainer>

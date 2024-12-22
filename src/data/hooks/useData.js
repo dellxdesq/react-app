@@ -34,8 +34,6 @@ export const useSaveNewTodoItem = () => {
   }
 }
 
-  //подключить хук мутации, вызвать метод из LS по удалению элемента
-  //Обновить данные в RQ по ключу
 export const useDeleteTodoItem = () => {
   const client = useQueryClient();
   const { mutate } = useMutation({
@@ -47,3 +45,16 @@ export const useDeleteTodoItem = () => {
 
   return { mutate };
 }
+
+export const useToggleTodoItem = () => {
+  const client = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationFn: (todoItemId) => LocalStorage.toggleTodoItemInLocalStorage(todoItemId),
+    onSuccess: () => {
+      client.invalidateQueries(['todo']);
+    },
+  });
+
+  return { mutate };
+};

@@ -3,18 +3,27 @@ import styled, { css } from "styled-components"
 import {TodoItemContainer} from './TodoItemContainer'
 import {TodoItemCheckbox} from './TodoItemCheckbox'
 import {useDeleteTodoItem} from 'C:/Users/Dell/Desktop/weblab2/react-app/src/data/hooks/useData.js'
+import {useToggleTodoItem} from 'C:/Users/Dell/Desktop/weblab2/react-app/src/data/hooks/useData.js'
 
 const checkedCss = css`
   color: #B5B5BA;
   text-decoration: line-through;
 `
 
-const Title = styled.span(props => {
-  return `
-    font-size: 15px;
-    ${props.checked ? checkedCss : ''};
-  `;
-})
+const TitleContainer = styled.div`
+  flex: 1; 
+  padding: 0 10px; 
+  display: flex;
+  align-items: center;
+`;
+
+const Title = styled.span`
+  font-size: 15px;
+  ${props => (props.isDone ? checkedCss : "")};
+  white-space: pre-wrap;
+  word-break: break-word; 
+  line-height: 1.5;
+`;
 
 const Delete = styled.span`
   display: inline-block;
@@ -26,11 +35,14 @@ const Delete = styled.span`
   background-size: 13px;
   cursor: pointer;
 `;
-
-// на иконку удаление повесить обработчик, который будет вызывать confirm 
-// если confirm = true - вызываем удаление по айдишнику
-export const TodoItem = ({ id, title, checked }) => {
+export const TodoItem = ({ id, title, isDone }) => {
   const { mutate: deleteTodoItem } = useDeleteTodoItem();
+  const { mutate: toggleTodoItem } = useToggleTodoItem();
+
+  const handleCheckboxClick = () => {
+    toggleTodoItem(id); 
+  };
+
   const handleDelete = () => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm('Вы уверены, что хотите удалить эту задачу?')) {
@@ -40,10 +52,10 @@ export const TodoItem = ({ id, title, checked }) => {
 
   return (
     <TodoItemContainer>
-      <TodoItemCheckbox checked={checked} />
-      <Title checked={checked}>
-        {title}
-      </Title>
+       <TodoItemCheckbox checked={isDone} onClick={handleCheckboxClick} />
+      <TitleContainer>
+        <Title checked={isDone}>{title}</Title>
+      </TitleContainer>
       <Delete onClick={handleDelete} />
     </TodoItemContainer>
   );
