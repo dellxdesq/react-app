@@ -58,3 +58,19 @@ export const useToggleTodoItem = () => {
 
   return { mutate };
 };
+
+
+export const useUpdateTodoPriority = () => {
+  const client = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationFn: ({ id, priority }) => {
+      return LocalStorage.updateTodoPriorityInLocalStorage(id, priority);
+    },
+    onSuccess: () => {
+      client.invalidateQueries(['todo']);
+    },
+  });
+
+  return { mutate };
+};

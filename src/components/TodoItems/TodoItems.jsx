@@ -1,14 +1,15 @@
-import React, {useState} from 'react';
-import {TodoItemsContainer} from './TodoItemsContainer';
-import {NewTodoItem} from '../TodoItem/NewTodoItem';
-import {TodoItem} from '../TodoItem/TodoItem';
-import {useData} from '../../data/hooks/useData';
-import {SearchInput} from './components/SearchInput';
+import React, { useState } from 'react';
+import { TodoItemsContainer } from './TodoItemsContainer';
+import { NewTodoItem } from '../TodoItem/NewTodoItem';
+import { TodoItem } from '../TodoItem/TodoItem';
+import { useData } from '../../data/hooks/useData';
+import { SearchInput } from './components/SearchInput';
 
 export const TodoItems = () => {
   const [searchValue, setSearchValue] = useState('');
+  const [isSorted, setIsSorted] = useState(false);
 
-  const {data: todoItems, isLoading} = useData();
+  const { data: todoItems, isLoading } = useData();
 
   if (!todoItems || isLoading) {
     return (
@@ -18,19 +19,27 @@ export const TodoItems = () => {
     );
   }
 
+  const filteredBySearchItems = todoItems.filter((todoItem) => {
+    const normalizedSearchValue = searchValue.trim().replace(/\s+/g, '').toLowerCase();
+    const normalizedTitle = todoItem.title.replace(/\s+/g, '').toLowerCase();
+    
+    return normalizedSearchValue.length >= 3
+      ? normalizedTitle.includes(normalizedSearchValue)
+      : true;
+  });
 
-  const filteredBySearchItems = todoItems.filter((todoItem) =>
-    todoItem.title.toLowerCase().includes(searchValue.toLowerCase())
-  );
+  const sortedItems = isSorted
+    ? [...filteredBySearchItems].sort((a, b) => b.priority - a.priority)
+    : filteredBySearchItems;
 
-
-  const todoItemsElements = filteredBySearchItems.map((item) => {
+  const todoItemsElements = sortedItems.map((item) => {
     return (
-      <TodoItem 
-        key={item.id} 
-        id={item.id} 
-        title={item.title} 
-        isDone={item.isDone} 
+      <TodoItem
+        key={item.id}
+        id={item.id}
+        title={item.title}
+        isDone={item.isDone}
+        priority={item.priority || 1}
       />
     );
   });
@@ -38,8 +47,11 @@ export const TodoItems = () => {
   return (
     <TodoItemsContainer>
       <SearchInput value={searchValue} setValue={setSearchValue} />
+      <button onClick={() => setIsSorted((prev) => !prev)}>
+        {isSorted ? 'Убрать сортировку' : 'Сортировать по приоритету'}
+      </button>
       {todoItemsElements}
       <NewTodoItem />
     </TodoItemsContainer>
-  )
-}
+  );
+};

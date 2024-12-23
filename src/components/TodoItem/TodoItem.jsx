@@ -4,6 +4,7 @@ import {TodoItemContainer} from './TodoItemContainer'
 import {TodoItemCheckbox} from './TodoItemCheckbox'
 import {useDeleteTodoItem} from 'C:/Users/Dell/Desktop/weblab2/react-app/src/data/hooks/useData.js'
 import {useToggleTodoItem} from 'C:/Users/Dell/Desktop/weblab2/react-app/src/data/hooks/useData.js'
+import {useUpdateTodoPriority} from 'C:/Users/Dell/Desktop/weblab2/react-app/src/data/hooks/useData.js'
 
 const checkedCss = css`
   color: #B5B5BA;
@@ -35,9 +36,36 @@ const Delete = styled.span`
   background-size: 13px;
   cursor: pointer;
 `;
-export const TodoItem = ({ id, title, isDone }) => {
+
+
+const PriorityButton = styled.button`
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: none;
+  margin: 0 5px;
+  cursor: pointer;
+
+  background-color: ${({ priority }) => {
+    if (priority === 1) return 'red';
+    if (priority === 2) return 'yellow';
+    if (priority === 3) return 'green';
+    return 'gray';
+  }};
+
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+export const TodoItem = ({ id, title, isDone, priority }) => {
   const { mutate: deleteTodoItem } = useDeleteTodoItem();
   const { mutate: toggleTodoItem } = useToggleTodoItem();
+  const { mutate: updateTodoPriority } = useUpdateTodoPriority();
 
   const handleCheckboxClick = () => {
     toggleTodoItem(id); 
@@ -50,12 +78,20 @@ export const TodoItem = ({ id, title, isDone }) => {
     }
   };
 
+  const handlePriorityClick = () => {
+    const nextPriority = (priority % 3) + 1;
+    updateTodoPriority({ id, priority: nextPriority });
+  };
+
   return (
     <TodoItemContainer>
        <TodoItemCheckbox checked={isDone} onClick={handleCheckboxClick} />
       <TitleContainer>
         <Title checked={isDone}>{title}</Title>
       </TitleContainer>
+      <PriorityButton priority={priority} onClick={handlePriorityClick}>
+        {priority}
+      </PriorityButton>
       <Delete onClick={handleDelete} />
     </TodoItemContainer>
   );

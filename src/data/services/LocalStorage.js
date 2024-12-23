@@ -60,5 +60,22 @@ export const LocalStorage = {
           reject(error);
         });
       });
+    },
+
+    updateTodoPriorityInLocalStorage: (todoItemId, newPriority) => {
+      return new Promise((resolve, reject) => {
+        LocalStorage.getTodoItemsFromLocalStorage()
+          .then((todoItems) => {
+            const updatedTodoItems = todoItems.map((item) => {
+              if (item.id === todoItemId) {
+                return { ...item, priority: newPriority }; // Обновляем приоритет
+              }
+              return item;
+            });
+            localStorage.setItem(TODO_ITEMS_LOCAL_STORAGE_KEY, JSON.stringify(updatedTodoItems));
+            resolve();
+          })
+          .catch(reject);
+      });
     }
 }
