@@ -2,23 +2,18 @@ import React from 'react';
 import styled, { css } from "styled-components"
 import {TodoItemContainer} from './TodoItemContainer'
 import {TodoItemCheckbox} from './TodoItemCheckbox'
-import {useDeleteTodoItem} from 'C:/Users/Dell/Desktop/weblab2/react-app/src/data/hooks/useData.js'
-import {useToggleTodoItem} from 'C:/Users/Dell/Desktop/weblab2/react-app/src/data/hooks/useData.js'
-import {useUpdateTodoPriority} from 'C:/Users/Dell/Desktop/weblab2/react-app/src/data/hooks/useData.js'
+import {useDeleteTodoItem, useToggleTodoItem, useUpdateTodoPriority} from '../../data/hooks/useData'
 
 const checkedCss = css`
   color: #B5B5BA;
   text-decoration: line-through;
 `
 
-const TitleContainer = styled.div`
+const Title = styled.span`
   flex: 1; 
   padding: 0 10px; 
   display: flex;
   align-items: center;
-`;
-
-const Title = styled.span`
   font-size: 15px;
   ${props => (props.isDone ? checkedCss : "")};
   white-space: pre-wrap;
@@ -49,11 +44,10 @@ const PriorityButton = styled.button`
   background-color: ${({ priority }) => {
     if (priority === 1) return 'red';
     if (priority === 2) return 'yellow';
-    if (priority === 3) return 'green';
-    return 'gray';
+    return 'green';
   }};
 
-  color: white;
+  color: black;
   font-size: 14px;
   font-weight: bold;
 
@@ -86,9 +80,7 @@ export const TodoItem = ({ id, title, isDone, priority }) => {
   return (
     <TodoItemContainer>
        <TodoItemCheckbox checked={isDone} onClick={handleCheckboxClick} />
-      <TitleContainer>
         <Title checked={isDone}>{title}</Title>
-      </TitleContainer>
       <PriorityButton priority={priority} onClick={handlePriorityClick}>
         {priority}
       </PriorityButton>
